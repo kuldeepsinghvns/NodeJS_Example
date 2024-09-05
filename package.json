@@ -3,7 +3,8 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "mysql": "^2.18.1",
-    "package.json": "^2.0.1"
+    "package.json": "^2.0.1",
+    "ws": "^8.18.0"
   },
   "scripts": {
     "start": "node server.js"
