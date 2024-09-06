@@ -1,6 +1,6 @@
 const WebSocket = require("ws");
 
-const server = new WebSocket.Server({ port: 8080 });
+const server = new WebSocket.Server({ ip: "0.0.0.0", port: 8080 });
 
 let socket_1 = null;
 let socket_2 = null;
