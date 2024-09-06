@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+      {
+        "source": "/two_way_chat/(.*)",
+        "destination": "/$1"
+      }
+    ]
+  }
