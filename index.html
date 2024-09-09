@@ -106,7 +106,12 @@
     </div>
 
     <script>
-        const socket = new WebSocket('ws://localhost:8080');
+        // const socket = new WebSocket('ws://192.168.1.16:8080');
+         // const socket = new WebSocket('ws://localhost:8080');
+        //  const socket = new WebSocket('ws://185.38.109.109:8080');
+        const socket = new WebSocket('wss://node-js-example.vercel.app'); 
+
+
 
         socket.onopen = function () {
             console.log('Connected to WebSocket server');
