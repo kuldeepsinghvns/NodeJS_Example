@@ -27,14 +27,13 @@
         }
 
         button {
-            position: relative;  
+            position: relative;
             padding: 10px;
             background-color: #19BA92;
             border-radius: 100px;
             border: none;
             color: #fff;
             cursor: pointer;
-            align-items: right;
             font-size: 16px;
             width: 15%;
         }
@@ -66,9 +65,10 @@
         }
 
         .shadow {
-            box-shadow: 10px 20px 5px 10px rgb(116, 115, 115);  
+            box-shadow: 10px 20px 5px 10px rgb(116, 115, 115);
         }
-        h2{
+
+        h2 {
             background-color: rgba(0, 0, 0, 0.777);
             border: #c6cdcc solid 2px;
             color: rgb(240, 232, 235);
@@ -79,7 +79,7 @@
 <body>
     <div class="container">
         <br>
-        <div class="row ">
+        <div class="row">
             <div class="col-md-4"></div>
             <div class="col-md-4 text-center shadow">
                 <h2>Two-Way Chat</h2>
@@ -92,26 +92,21 @@
             <div class="col-md-4 col-lg-6 shadow">
                 <div>
                     <br>
-                    <!-- <h4 class="text-center">Chat</h4> -->
                     <div id="chat"></div>
                 </div>
                 <div class="mb-3 d-flex">
-                    <input type="text" id="messageInput" placeholder="Type a message..." autofocus class="flex-grow-1 me-2">
+                    <input type="text" id="messageInput" placeholder="Type a message..." autofocus
+                        class="flex-grow-1 me-2">
                     <button onclick="sendMessage()">Send</button>
                 </div>
-                
             </div>
             <div class="col-md-4 col-lg-3"></div>
         </div>
     </div>
 
     <script>
-        // const socket = new WebSocket('ws://192.168.1.16:8080');
-         // const socket = new WebSocket('ws://localhost:8080');
-         const socket = new WebSocket('wss://185.38.109.109:8080');
-        // const socket = new WebSocket('ws://node-js-example.vercel.app'); 
-
-
+        // WebSocket Configuration
+        const socket = new WebSocket('ws://localhost:8080');
 
         socket.onopen = function () {
             console.log('Connected to WebSocket server');
@@ -124,14 +119,10 @@
         socket.onmessage = function (event) {
             if (typeof event.data === 'string') {
                 appendMessage(`Received: ${event.data}`, 'received');
-            } else if (event.data instanceof Blob) {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    appendMessage(`Received: ${reader.result}`, 'received');
-                };
-                reader.readAsText(event.data);
             }
         };
+
+
 
         function sendMessage() {
             const input = document.getElementById('messageInput');
@@ -152,11 +143,86 @@
             messageDiv.textContent = message;
             messageDiv.classList.add('message', type);
             chat.appendChild(messageDiv);
-
-            // Scroll to the bottom whenever a new message is added
-            chat.scrollTop = chat.scrollHeight;
+            chat.scrollTop = chat.scrollHeight; // Scroll to bottom
         }
     </script>
+
+    <!-- Firebase -->
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKI98vzkxjHVuQ7-p8xtH2oum-CxUkDC4",
+            authDomain: "fir-demo-7ea78.firebaseapp.com",
+            projectId: "fir-demo-7ea78",
+            storageBucket: "fir-demo-7ea78.appspot.com",
+            messagingSenderId: "336438998712",
+            appId: "1:336438998712:web:2db65ecce8bc4c11c9a64d",
+            measurementId: "G-Y2HP28VPH7"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+
+        // Request Notification Permission
+        if (Notification.permission === "default") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    console.log("Notification permission granted.");
+                }
+            });
+        }
+
+        messaging.getToken({ vapidKey: 'BD3BFhA42UjqVXbr6XEbTGsYv4N8NUNz1iRtJYL1x09f62IEd6edBLZpWCCL_jJzGOEXgBdngwuuvPgP2tW0fyc' })
+            .then((currentToken) => {
+                if (currentToken) {
+                    console.log('FCM Token:', currentToken);
+                    // Send token to your server
+                } else {
+                    console.log('No registration token available.');
+                }
+            })
+            .catch((err) => {
+                console.log('An error occurred while retrieving token.', err);
+            });
+
+
+            
+        // Send Token to Backend Server
+        function sendTokenToServer(token) {
+            console.log("Sending token to server:", token);
+
+            fetch('http://localhost:3000/store-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token: token })
+            }).then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error storing token:', error));
+        }
+
+        // Foreground Notifications
+        messaging.onMessage(payload => {
+            console.log("Foreground Notification:", payload);
+            const { title, body, icon } = payload.notification;
+            new Notification(title, { body, icon });
+        });
+
+        // Register Service Worker
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register('./firebase-messaging-sw.js').then(registration => {
+                console.log("Service Worker Registered:", registration.scope);
+            }).catch(error => {
+                console.error("Service Worker Registration Failed:", error);
+            });
+        }
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
