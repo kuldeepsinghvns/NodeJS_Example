@@ -14,6 +14,7 @@ server.get("/",(req,res)=>{
     </form>
    `);
 });
+
 server.post("/submit",(req,res)=>{
     const {name,email}=req.body;
     console.log(req.body);
