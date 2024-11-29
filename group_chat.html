@@ -1,0 +1,51 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat</title>
+</head>
+
+<body>
+    <div>
+      
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter your Username here">
+            <button id="sendBtn">Send</button>
+        
+    </div>
+    <div>
+        <pre id="usernames"></pre>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        const sendBtn = document.getElementById('sendBtn');
+        const usernameInput = document.getElementById('username');
+        const usernamesPre = document.getElementById('usernames');
+
+        ws.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+
+        ws.onmessage = (event) => {
+            usernamesPre.textContent += `${event.data}\n`;
+        };
+
+        ws.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        sendBtn.addEventListener('click', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                ws.send(username);
+                console.log(`username::${username}`);
+                usernameInput.value = '';
+            }
+        });
+    </script>
+</body>
+
+</html> -->
